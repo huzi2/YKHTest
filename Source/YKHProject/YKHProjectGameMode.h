@@ -14,6 +14,3 @@ class AYKHProjectGameMode : public AGameModeBase
 public:
 	AYKHProjectGameMode();
 };
-
-
-
