@@ -28,6 +28,15 @@ private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
+	void PlayAnim(class UAnimMontage* Anim);
+
+	UFUNCTION()
+	void StopAnim(class UAnimMontage* Anim);
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category = Pawn)
+	class UAnimMontage* MeleeAnim;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;

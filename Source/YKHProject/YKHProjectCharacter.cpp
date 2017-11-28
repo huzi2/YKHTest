@@ -66,6 +66,7 @@ void AYKHProjectCharacter::Pick()
 
 void AYKHProjectCharacter::Use()
 {
+	PlayAnim(MeleeAnim);
 }
 
 void AYKHProjectCharacter::Move(EAxis::Type Axis, float Value)
@@ -92,4 +93,19 @@ void AYKHProjectCharacter::MoveForward(float Value)
 void AYKHProjectCharacter::MoveRight(float Value)
 {
 	Move(EAxis::Y, Value);
+}
+
+void AYKHProjectCharacter::PlayAnim(class UAnimMontage* Anim)
+{
+	float AnimDuration = PlayAnimMontage(Anim);
+
+	FTimerHandle AnimTimerHandle;
+	FTimerDelegate StopTimerDelegate;
+	StopTimerDelegate.BindUFunction(this, TEXT("StopAnim"), Anim);
+	GetWorldTimerManager().SetTimer(AnimTimerHandle, StopTimerDelegate, AnimDuration, false);
+}
+
+void AYKHProjectCharacter::StopAnim(class UAnimMontage* Anim)
+{
+	//StopAnimMontage(Anim);
 }
