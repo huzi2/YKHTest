@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 
 AYKHProjectCharacter::AYKHProjectCharacter()
+	: DuringUse(false)
 {
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -66,6 +67,11 @@ void AYKHProjectCharacter::Pick()
 
 void AYKHProjectCharacter::Use()
 {
+	if (DuringUse == true)
+	{
+		return;
+	}
+
 	PlayAnim(MeleeAnim);
 }
 
@@ -107,5 +113,7 @@ void AYKHProjectCharacter::PlayAnim(class UAnimMontage* Anim)
 
 void AYKHProjectCharacter::StopAnim(class UAnimMontage* Anim)
 {
-	//StopAnimMontage(Anim);
+	DuringUse = false;
+
+	StopAnimMontage(Anim);
 }
