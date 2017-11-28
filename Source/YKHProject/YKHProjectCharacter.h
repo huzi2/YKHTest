@@ -20,6 +20,9 @@ public:
 private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Pawn|Character")
+	virtual void Jump() override;
+
 private:
 	void Pick();
 	void Use();
@@ -35,6 +38,9 @@ private:
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = Pawn)
+	class UAnimMontage* PickAnim;
+
+	UPROPERTY(EditDefaultsOnly, Category = Pawn)
 	class UAnimMontage* MeleeAnim;
 
 private:
@@ -45,5 +51,6 @@ private:
 	class USpringArmComponent* CameraBoom;
 
 private:
+	bool DuringPick;
 	bool DuringUse;
 };

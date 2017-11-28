@@ -9,7 +9,8 @@
 #include "GameFramework/SpringArmComponent.h"
 
 AYKHProjectCharacter::AYKHProjectCharacter()
-	: DuringUse(false)
+	: DuringPick(false)
+	, DuringUse(false)
 {
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -61,22 +62,60 @@ void AYKHProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AYKHProjectCharacter::MoveRight);
 }
 
+void AYKHProjectCharacter::Jump()
+{
+	if (DuringPick == true)
+	{
+		return;
+	}
+
+	Super::Jump();
+}
+
 void AYKHProjectCharacter::Pick()
 {
+	if (DuringPick == true)
+	{
+		return;
+	}
+	if (DuringUse == true)
+	{
+		return;
+	}
+	if (GetMovementComponent()->IsFalling() == true)
+	{
+		return;
+	}
+
+	PlayAnim(PickAnim);
+	DuringPick = true;
 }
 
 void AYKHProjectCharacter::Use()
 {
+	if (DuringPick == true)
+	{
+		return;
+	}
 	if (DuringUse == true)
 	{
 		return;
 	}
 
 	PlayAnim(MeleeAnim);
+	DuringUse = true;
 }
 
 void AYKHProjectCharacter::Move(EAxis::Type Axis, float Value)
 {
+	if (DuringPick == true)
+	{
+		return;
+	}
+	if (DuringUse == true)
+	{
+		return;
+	}
 	if (Controller == nullptr)
 	{
 		return;
@@ -113,6 +152,7 @@ void AYKHProjectCharacter::PlayAnim(class UAnimMontage* Anim)
 
 void AYKHProjectCharacter::StopAnim(class UAnimMontage* Anim)
 {
+	DuringPick = false;
 	DuringUse = false;
 
 	StopAnimMontage(Anim);
