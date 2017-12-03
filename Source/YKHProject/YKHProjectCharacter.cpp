@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+﻿// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "YKHProjectCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -7,6 +7,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+
+#include "YKHProjectItem.h"
+#include "Kismet/GameplayStatics.h"
 
 AYKHProjectCharacter::AYKHProjectCharacter()
 	: DuringPick(false)
@@ -87,6 +90,22 @@ void AYKHProjectCharacter::Pick()
 		return;
 	}
 
+	// 임시 코드임 나중에 아이템을 관리하는 매니저에서 읽어오도록
+	if (WeaponItem == nullptr)
+	{
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AYKHProjectItem::StaticClass(), FoundActors);
+
+		WeaponItem = Cast<AYKHProjectItem>(FoundActors[0]);
+	}
+
+	// 아이템을 장착하기는 하는데 각도가 이상함 (소켓 문제?)
+	if (WeaponItem != nullptr)
+	{
+		FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, false);
+		WeaponItem->AttachToComponent(this->GetMesh(), AttachRules, TEXT("WeaponSocket"));
+	}
+
 	PlayAnim(PickAnim);
 	DuringPick = true;
 }
@@ -140,7 +159,7 @@ void AYKHProjectCharacter::MoveRight(float Value)
 	Move(EAxis::Y, Value);
 }
 
-void AYKHProjectCharacter::PlayAnim(class UAnimMontage* Anim)
+void AYKHProjectCharacter::PlayAnim(UAnimMontage* Anim)
 {
 	float AnimDuration = PlayAnimMontage(Anim);
 
@@ -150,7 +169,7 @@ void AYKHProjectCharacter::PlayAnim(class UAnimMontage* Anim)
 	GetWorldTimerManager().SetTimer(AnimTimerHandle, StopTimerDelegate, AnimDuration, false);
 }
 
-void AYKHProjectCharacter::StopAnim(class UAnimMontage* Anim)
+void AYKHProjectCharacter::StopAnim(UAnimMontage* Anim)
 {
 	DuringPick = false;
 	DuringUse = false;

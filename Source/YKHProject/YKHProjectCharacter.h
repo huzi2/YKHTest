@@ -19,8 +19,6 @@ public:
 
 private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(BlueprintCallable, Category = "Pawn|Character")
 	virtual void Jump() override;
 
 private:
@@ -36,19 +34,21 @@ private:
 	UFUNCTION()
 	void StopAnim(class UAnimMontage* Anim);
 
-public:
-	UPROPERTY(EditDefaultsOnly, Category = Pawn)
-	class UAnimMontage* PickAnim;
-
-	UPROPERTY(EditDefaultsOnly, Category = Pawn)
-	class UAnimMontage* MeleeAnim;
-
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+	UPROPERTY(EditDefaultsOnly, Category = Pawn)
+	class UAnimMontage* PickAnim;
+
+	UPROPERTY(EditDefaultsOnly, Category = Pawn)
+	class UAnimMontage* MeleeAnim;
+
+	UPROPERTY(EditDefaultsOnly, Category = Pawn)
+	class AYKHProjectItem* WeaponItem;
 
 private:
 	bool DuringPick;
