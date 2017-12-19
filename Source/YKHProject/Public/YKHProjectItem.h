@@ -23,4 +23,7 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Weapon)
 	class UBoxComponent* BoxComponent;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Weapon)
+	class USphereComponent* PickComponent;
 };
