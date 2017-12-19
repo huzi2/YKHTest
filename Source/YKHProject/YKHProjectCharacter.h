@@ -34,12 +34,17 @@ private:
 	UFUNCTION()
 	void StopAnim(class UAnimMontage* Anim);
 
+	class AYKHProjectItem* GetNearItems() const;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* PickComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = Pawn)
 	class UAnimMontage* PickAnim;

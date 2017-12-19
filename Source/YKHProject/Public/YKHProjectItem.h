@@ -20,4 +20,7 @@ public:
 private:
 	UPROPERTY(VisibleDefaultsOnly, Category = Weapon)
 	class USkeletalMeshComponent* ItemMesh;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Weapon)
+	class UBoxComponent* BoxComponent;
 };

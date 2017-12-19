@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -16,7 +17,7 @@ AYKHProjectCharacter::AYKHProjectCharacter()
 	, DuringUse(false)
 {
 	// Set size for player capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(50.f, 42.0f);
 
 	// Don't rotate character to camera direction
 	bUseControllerRotationPitch = false;
@@ -41,6 +42,10 @@ AYKHProjectCharacter::AYKHProjectCharacter()
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	PickComponent = CreateDefaultSubobject<USphereComponent>(TEXT("PickComponent"));
+	PickComponent->SetupAttachment(RootComponent);
+	PickComponent->SetSphereRadius(70.f);
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = false;
@@ -90,16 +95,16 @@ void AYKHProjectCharacter::Pick()
 		return;
 	}
 
-	// 임시 코드임 나중에 아이템을 관리하는 매니저에서 읽어오도록
 	if (WeaponItem == nullptr)
 	{
-		TArray<AActor*> FoundActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AYKHProjectItem::StaticClass(), FoundActors);
+		// 모든 액터에서 확인하는 코드..나중에 필요할지도 모르니 냅둠
+		//TArray<AActor*> FoundActors;
+		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AYKHProjectItem::StaticClass(), FoundActors);
+		//WeaponItem = Cast<AYKHProjectItem>(FoundActors[0]);
 
-		WeaponItem = Cast<AYKHProjectItem>(FoundActors[0]);
+		WeaponItem = GetNearItems();
 	}
 
-	// 아이템을 장착하기는 하는데 각도가 이상함 (소켓 문제?)
 	if (WeaponItem != nullptr)
 	{
 		FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, false);
@@ -161,7 +166,7 @@ void AYKHProjectCharacter::MoveRight(float Value)
 
 void AYKHProjectCharacter::PlayAnim(UAnimMontage* Anim)
 {
-	float AnimDuration = PlayAnimMontage(Anim);
+	const float AnimDuration = PlayAnimMontage(Anim);
 
 	FTimerHandle AnimTimerHandle;
 	FTimerDelegate StopTimerDelegate;
@@ -175,4 +180,27 @@ void AYKHProjectCharacter::StopAnim(UAnimMontage* Anim)
 	DuringUse = false;
 
 	StopAnimMontage(Anim);
+}
+
+AYKHProjectItem* AYKHProjectCharacter::GetNearItems() const
+{
+	if (PickComponent == nullptr)
+	{
+		return nullptr;
+	}
+
+	TArray<AActor*> NearItems;
+	PickComponent->GetOverlappingActors(NearItems);
+
+	for (auto PickItem : NearItems)
+	{
+		AYKHProjectItem* PickItemTemp = Cast<AYKHProjectItem>(PickItem);
+
+		// 여러 개일 경우 순서 처리 아직 미정
+		if (PickItemTemp != nullptr)
+		{
+			return PickItemTemp;
+		}
+	}
+	return nullptr;
 }
