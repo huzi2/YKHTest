@@ -105,11 +105,12 @@ void AYKHProjectCharacter::Pick()
 		WeaponItem = GetNearItems();
 	}
 
-	if (WeaponItem != nullptr)
+	if (WeaponItem == nullptr)
 	{
-		FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, false);
-		WeaponItem->AttachToComponent(this->GetMesh(), AttachRules, TEXT("WeaponSocket"));
+		return;
 	}
+
+	AttachWeapon();
 
 	PlayAnim(PickAnim);
 	DuringPick = true;
@@ -125,6 +126,8 @@ void AYKHProjectCharacter::Use()
 	{
 		return;
 	}
+
+	DetachWeapon();
 
 	PlayAnim(MeleeAnim);
 	DuringUse = true;
@@ -203,4 +206,28 @@ AYKHProjectItem* AYKHProjectCharacter::GetNearItems() const
 		}
 	}
 	return nullptr;
+}
+
+void AYKHProjectCharacter::AttachWeapon()
+{
+	if (WeaponItem == nullptr)
+	{
+		return;
+	}
+
+	FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, false);
+	WeaponItem->AttachToComponent(this->GetMesh(), AttachRules, TEXT("WeaponSocket"));
+}
+
+void AYKHProjectCharacter::DetachWeapon()
+{
+	if (WeaponItem == nullptr)
+	{
+		return;
+	}
+
+	FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld, false);
+	WeaponItem->DetachFromActor(DetachRules);
+	WeaponItem->SetActorScale3D(FVector(2.f, 2.f, 2.f));
+	WeaponItem = nullptr;
 }

@@ -35,6 +35,8 @@ private:
 	void StopAnim(class UAnimMontage* Anim);
 
 	class AYKHProjectItem* GetNearItems() const;
+	void AttachWeapon();
+	void DetachWeapon();
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
