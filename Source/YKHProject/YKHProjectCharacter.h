@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "YKHProjectItem.h"
 #include "YKHProjectCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -16,6 +17,10 @@ public:
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "AYKHProjectCharacter")
+	WEAPON_TYPE GetEquipWeaponType() const;
 
 private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -52,7 +57,7 @@ private:
 	class UAnimMontage* PickAnim;
 
 	UPROPERTY(EditDefaultsOnly, Category = Pawn)
-	class UAnimMontage* MeleeAnim;
+	class UAnimMontage* AttackAnim;
 
 	UPROPERTY(EditDefaultsOnly, Category = Pawn)
 	class AYKHProjectItem* WeaponItem;

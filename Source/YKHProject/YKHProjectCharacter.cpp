@@ -9,7 +9,6 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
-#include "YKHProjectItem.h"
 #include "Kismet/GameplayStatics.h"
 
 AYKHProjectCharacter::AYKHProjectCharacter()
@@ -55,6 +54,15 @@ AYKHProjectCharacter::AYKHProjectCharacter()
 void AYKHProjectCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+}
+
+WEAPON_TYPE AYKHProjectCharacter::GetEquipWeaponType() const
+{
+	if (WeaponItem != nullptr)
+	{
+		return WeaponItem->GetWeaponType();
+	}
+	return WEAPON_TYPE::WEAPON_OFF;
 }
 
 void AYKHProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -127,9 +135,9 @@ void AYKHProjectCharacter::Use()
 		return;
 	}
 
-	DetachWeapon();
+	//DetachWeapon();
 
-	PlayAnim(MeleeAnim);
+	PlayAnim(AttackAnim);
 	DuringUse = true;
 }
 

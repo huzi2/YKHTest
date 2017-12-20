@@ -16,6 +16,8 @@ AYKHProjectItem::AYKHProjectItem(const FObjectInitializer& ObjectInitializer)
 	PickComponent->SetSphereRadius(50.f);
 
 	this->SetActorScale3D(FVector(2.f, 2.f, 2.f));
+
+	WeaponType = WEAPON_TYPE::WEAPON_OFF;
 }
 
 void AYKHProjectItem::Tick(float DeltaTime)
