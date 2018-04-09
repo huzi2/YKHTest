@@ -11,9 +11,20 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "Engine.h"
+//#include "AnimNode_BlendListByInt.h"
+//#include "AnimNodes/AnimNode_BlendListByInt.h"
+//#include "AnimGraphNode_BlendListByInt.h"
+//#include "AnimGraphNode_BlendListByInt.h"
+//#include "Runtime/AnimGraphRuntime/Public/AnimNodes/AnimNode_BlendListByInt.h"
+//#include "Runtime/AnimGraphRuntime/Public/AnimNodes/AnimNode_BlendListBase.generated.h"
+//#include "Engine/Source/Runtime/AnimGraphRuntime/Public/AnimNodes/AnimNode_BlendListByInt.h"
+//#include "AnimNode_BlendListByInt.h"
+
 AYKHProjectCharacter::AYKHProjectCharacter()
 	: DuringPick(false)
 	, DuringUse(false)
+	, PlayAnimIndex(0)
 {
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(50.f, 42.0f);
@@ -135,10 +146,14 @@ void AYKHProjectCharacter::Use()
 		return;
 	}
 
+	PlayAnim(TEXT(""));
+
 	//DetachWeapon();
 
-	PlayAnim(AttackAnim);
-	DuringUse = true;
+	//PlayAnim(AttackAnim);
+	//PlayAnim(TEXT("Attack"));
+	PlayAnimIndex = 1;
+	//DuringUse = true;
 }
 
 void AYKHProjectCharacter::Move(EAxis::Type Axis, float Value)
@@ -185,12 +200,75 @@ void AYKHProjectCharacter::PlayAnim(UAnimMontage* Anim)
 	GetWorldTimerManager().SetTimer(AnimTimerHandle, StopTimerDelegate, AnimDuration, false);
 }
 
+void AYKHProjectCharacter::PlayAnim(const FString& AnimName)
+{
+	/*if (AnimList.Contains(AnimName) == false)
+	{
+		return;
+	}
+
+	UAnimSequence* AnimSequence = *AnimList.Find(AnimName);
+
+	if (AnimSequence == nullptr)
+	{
+		return;
+	}*/
+
+	/*GetMesh()->PlayAnimation(AnimSequence, false);
+	const float AnimDuration = AnimSequence->GetMaxCurrentTime();
+
+	FTimerHandle AnimTimerHandle;
+	FTimerDelegate StopTimerDelegate;
+	StopTimerDelegate.BindUFunction(this, TEXT("PlayAnim"), AnimName);
+	GetWorldTimerManager().SetTimer(AnimTimerHandle, StopTimerDelegate, AnimDuration, false);*/
+
+	if (TestAni == nullptr)
+	{
+		return;
+	}
+
+	//GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(TestAni, TEXT("Default"));
+
+	GetMesh()->PlayAnimation(TestAni, false);
+	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+	const float AnimDuration = TestAni->GetMaxCurrentTime();
+
+	FTimerHandle AnimTimerHandle;
+	GetWorldTimerManager().SetTimer(AnimTimerHandle, this, &AYKHProjectCharacter::StopAnim, AnimDuration, false);
+
+	IAnimClassInterface* AnimClassInterface = IAnimClassInterface::GetFromClass(GetClass());
+
+	if (AnimClassInterface == nullptr)
+	{
+		return;
+	}
+
+	const TArray<UStructProperty*>& AnimNodeProperties = AnimClassInterface->GetAnimNodeProperties();
+	for (UStructProperty* Property : AnimNodeProperties)
+	{
+		// 따로 애니메이션용 UObject를 만들어줘야할듯?
+		//if (Property->Struct->IsChildOf(FAnimNode_BlendListByInt::StaticStruct()) == true)
+		{
+		//	//Property->Struct->GetClass<UAnimSequence*>();
+		}
+	}
+}
+
 void AYKHProjectCharacter::StopAnim(UAnimMontage* Anim)
 {
 	DuringPick = false;
 	DuringUse = false;
 
 	StopAnimMontage(Anim);
+}
+
+void AYKHProjectCharacter::StopAnim()
+{
+	DuringPick = false;
+	DuringUse = false;
+
+	GetMesh()->Stop();
+	GetMesh()->PlayAnimation(IdleAni, true);
 }
 
 AYKHProjectItem* AYKHProjectCharacter::GetNearItems() const

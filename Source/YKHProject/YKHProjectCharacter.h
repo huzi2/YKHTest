@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AYKHProjectCharacter")
 	WEAPON_TYPE GetEquipWeaponType() const;
 
+	UFUNCTION(BlueprintCallable, Category = "AYKHProjectCharacter")
+	int32 GetPlayAnimIndex() const { return PlayAnimIndex; }
+
 private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Jump() override;
@@ -35,9 +38,12 @@ private:
 	void MoveRight(float Value);
 
 	void PlayAnim(class UAnimMontage* Anim);
+	void PlayAnim(const FString& AnimName);
 
 	UFUNCTION()
 	void StopAnim(class UAnimMontage* Anim);
+
+	void StopAnim();
 
 	class AYKHProjectItem* GetNearItems() const;
 	void AttachWeapon();
@@ -60,9 +66,17 @@ private:
 	class UAnimMontage* AttackAnim;
 
 	UPROPERTY(EditDefaultsOnly, Category = Pawn)
+	class UAnimationAsset* IdleAni;
+
+	UPROPERTY(EditDefaultsOnly, Category = Pawn)
+	class UAnimationAsset* TestAni;
+
+	UPROPERTY(EditDefaultsOnly, Category = Pawn)
 	class AYKHProjectItem* WeaponItem;
 
 private:
 	bool DuringPick;
 	bool DuringUse;
+
+	int32 PlayAnimIndex;
 };
